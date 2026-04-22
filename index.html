@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Meal Attendance</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+</head>
+
+<body>
+  <h2>Meal Attendance</h2>
+
+  <input type="text" id="userId" placeholder="Masukkan ID">
+  <button onclick="startScan()">Scan QR</button>
+
+  <div id="reader" style="width:300px;"></div>
+
+  <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbxyrVd_3xdjboSYKiHTq8mxt58Jq7DKzeV5JfaiKb2XV2hYMIL3oPZN5Xzz49uXseWMkQ/exec";
+
+    function startScan() {
+      const userId = document.getElementById("userId").value;
+
+      if (!userId) {
+        alert("Masukkan User ID dulu");
+        return;
+      }
+
+      const scanner = new Html5Qrcode("reader");
+
+      Html5Qrcode.getCameras().then(devices => {
+        const cameraId = devices[0].id;
+
+        scanner.start(
+          cameraId,
+          { fps: 10, qrbox: 250 },
+          (decodedText) => {
+            scanner.stop();
+
+            fetch(API_URL, {
+              method: "POST",
+              body: JSON.stringify({
+                userId: userId,
+                qrData: decodedText
+              })
+            })
+            .then(res => res.json())
+.then((data) => {
+  if (data.status === "ok") {
+    alert("Absensi berhasil!");
+  } else {
+    alert(data.message);
+  }
+});
+          }
+        );
+      });
+    }
+  </script>
+</body>
+</html>
