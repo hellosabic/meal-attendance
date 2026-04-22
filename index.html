@@ -46,8 +46,7 @@
 <div class="card" id="login" style="position:relative; z-index:10;">
   <h2>Meal Attendance</h2>
   <input type="text" id="userId" placeholder="Masukkan ID">
- <button onclick="login()" style="position:relative; z-index:10;">
-  Login
+ <button onclick="login()">Login</button>
 </button>
 </div>
 
@@ -67,11 +66,28 @@ let userId = "";
 let nama = "";
 
 function login() {
-  userId = document.getElementById("userId").value;
+  alert("klik terdeteksi"); // 🔥 debug
+
+  const input = document.getElementById("userId");
+  if (!input) {
+    alert("Input tidak ketemu");
+    return;
+  }
+
+  userId = input.value.trim();
+
+  if (!userId) {
+    alert("Masukkan ID dulu");
+    return;
+  }
+
+  console.log("Kirim ke API:", userId);
 
   fetch(API_URL + "?action=login&userId=" + userId)
     .then(res => res.json())
     .then(res => {
+      console.log("Response:", res);
+
       if (res.status === "ok") {
         nama = res.nama;
 
@@ -81,6 +97,10 @@ function login() {
       } else {
         alert("User tidak ditemukan");
       }
+    })
+    .catch(err => {
+      console.error(err);
+      alert("API error");
     });
 }
 
