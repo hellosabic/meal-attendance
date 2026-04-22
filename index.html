@@ -66,14 +66,9 @@ let userId = "";
 let nama = "";
 
 function login() {
-  alert("klik terdeteksi"); // 🔥 debug
+  alert("klik terdeteksi");
 
   const input = document.getElementById("userId");
-  if (!input) {
-    alert("Input tidak ketemu");
-    return;
-  }
-
   userId = input.value.trim();
 
   if (!userId) {
@@ -81,29 +76,39 @@ function login() {
     return;
   }
 
-  console.log("Kirim ke API:", userId);
+  const url = API_URL + "?action=login&userId=" + userId;
+  console.log("URL:", url);
 
-  fetch(API_URL + "?action=login&userId=" + userId)
-    .then(res => res.json())
+  fetch(url)
     .then(res => {
-      console.log("Response:", res);
+      console.log("Response raw:", res);
+      return res.text(); // 🔥 ubah dulu ke text
+    })
+    .then(text => {
+      console.log("TEXT:", text);
 
-      if (res.status === "ok") {
-        nama = res.nama;
+      try {
+        const data = JSON.parse(text);
+        console.log("JSON:", data);
 
-        document.getElementById("login").style.display = "none";
-        document.getElementById("menu").style.display = "block";
-        document.getElementById("welcome").innerText = "Welcome " + nama;
-      } else {
-        alert("User tidak ditemukan");
+        if (data.status === "ok") {
+          nama = data.nama;
+
+          document.getElementById("login").style.display = "none";
+          document.getElementById("menu").style.display = "block";
+          document.getElementById("welcome").innerText = "Welcome " + nama;
+        } else {
+          alert("User tidak ditemukan");
+        }
+      } catch (e) {
+        alert("Response bukan JSON:\n" + text);
       }
     })
     .catch(err => {
-      console.error(err);
-      alert("API error");
+      console.error("FETCH ERROR:", err);
+      alert("Gagal konek ke API");
     });
 }
-
 function scan() {
   const scanner = new Html5Qrcode("reader");
 
