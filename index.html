@@ -37,11 +37,13 @@
 
 <body>
 
-<div class="card" id="login">
+<div class="card" id="login" style="position:relative; z-index:10;">
   <h2>Meal Attendance</h2>
   <input type="text" id="userId" placeholder="Masukkan ID">
-  <button onclick="alert('klik jalan')">Login</button>
+  <button onclick="login()">Login</button>
 </div>
+
+<div id="reader" style="display:none;"></div>
 
 <div id="reader" style="display:none;"></div>
 
