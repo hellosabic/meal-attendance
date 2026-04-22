@@ -59,16 +59,19 @@ let nama = "";
 function login() {
   userId = document.getElementById("userId").value;
 
-  google.script.run.withSuccessHandler(function(res){
-    if (res.status === "ok") {
-      nama = res.nama;
-      document.getElementById("login").style.display = "none";
-      document.getElementById("menu").style.display = "block";
-      document.getElementById("welcome").innerText = "Welcome " + nama;
-    } else {
-      alert("User tidak ditemukan");
-    }
-  }).checkLogin(userId);
+  fetch(API_URL + "?action=login&userId=" + userId)
+    .then(res => res.json())
+    .then(res => {
+      if (res.status === "ok") {
+        nama = res.nama;
+
+        document.getElementById("login").style.display = "none";
+        document.getElementById("menu").style.display = "block";
+        document.getElementById("welcome").innerText = "Welcome " + nama;
+      } else {
+        alert("User tidak ditemukan");
+      }
+    });
 }
 
 function scan() {
