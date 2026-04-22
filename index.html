@@ -34,16 +34,22 @@
       cursor: pointer;
     }
   </style>
-  <style>
+<style>
 #reader {
+  width: 100%;
+  max-width: 400px;
+  margin: 20px auto;
+  display: none;
+}
+
+#scanner-wrapper {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: black;
+  inset: 0;
+  background: #000;
   z-index: 9999;
   display: none;
+  align-items: center;
+  justify-content: center;
 }
 </style>
 </head>
@@ -56,6 +62,8 @@
  <button onclick="login()">Login</button>
 </button>
 </div>
+  <div id="scanner-wrapper">
+  <div id="reader"></
 
 
 <div id="reader" style="display:none;"></div>
@@ -133,21 +141,20 @@ window.onload = () => {
 
 // ========= SCAN QR =========
 function scan() {
+  const wrapper = document.getElementById("scanner-wrapper");
   const reader = document.getElementById("reader");
-  reader.style.display = "block";
 
-  // sembunyikan menu saat scan
+  wrapper.style.display = "flex";
   document.getElementById("menu").style.display = "none";
 
   const scanner = new Html5Qrcode("reader");
 
   Html5Qrcode.getCameras().then(devices => {
-    if (!devices || devices.length === 0) {
+    if (!devices.length) {
       alert("Kamera tidak ditemukan");
       return;
     }
 
-    // ✅ pilih kamera BELAKANG
     const backCamera =
       devices.find(d => d.label.toLowerCase().includes("back")) ||
       devices[devices.length - 1];
@@ -156,11 +163,14 @@ function scan() {
       backCamera.id,
       {
         fps: 10,
-        qrbox: { width: 250, height: 250 }
+        qrbox: qrSize => {
+          const minEdge = Math.min(qrSize.width, qrSize.height);
+          return { width: minEdge * 0.7, height: minEdge * 0.7 };
+        }
       },
       text => {
         scanner.stop();
-        reader.style.display = "none";
+        wrapper.style.display = "none";
         document.getElementById("menu").style.display = "block";
 
         fetch(API_URL, {
@@ -170,10 +180,9 @@ function scan() {
             qrData: text
           })
         })
-        .then(res => res.json())
-        .then(res => alert(res.message));
-      },
-      err => console.warn(err)
+          .then(res => res.json())
+          .then(res => alert(res.message));
+      }
     );
   });
 }
