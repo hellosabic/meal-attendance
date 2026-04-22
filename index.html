@@ -10,6 +10,7 @@
       text-align: center;
       background: #f4f6f9;
     }
+    
 
     .card {
       background: white;
@@ -33,6 +34,11 @@
       cursor: pointer;
     }
   </style>
+  <style>
+#reader {
+  display: none;
+}
+</style>
 </head>
 
 <body>
@@ -40,7 +46,9 @@
 <div class="card" id="login" style="position:relative; z-index:10;">
   <h2>Meal Attendance</h2>
   <input type="text" id="userId" placeholder="Masukkan ID">
-  <button onclick="login()">Login</button>
+ <button onclick="login()" style="position:relative; z-index:10;">
+  Login
+</button>
 </div>
 
 
